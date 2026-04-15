@@ -1,5 +1,6 @@
 package com.example.orderservice.order.domain;
 
+import com.example.orderservice.common.exception.AlreadyCanceledOrderException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -54,7 +55,18 @@ public class Order {
         orderItem.assignOrder(this);
     }
 
-    public void updateStatus(OrderStatus orderStatus) {
-        this.orderStatus = orderStatus;
+    public void updateTotalPrice(BigDecimal totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
+    public void cancel() {
+        if (this.orderStatus == OrderStatus.CANCELLED) {
+            throw new AlreadyCanceledOrderException();
+        }
+
+        for (OrderItem orderItem : orderItems) {
+            orderItem.getProduct().increaseStock(orderItem.getQuantity());
+        }
+        this.orderStatus = OrderStatus.CANCELLED;
     }
 }

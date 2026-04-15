@@ -47,6 +47,14 @@ public class OrderItem {
         this.orderPrice = orderPrice;
     }
 
+    public static OrderItem of(Product product, int quantity, BigDecimal orderPrice) {
+        return OrderItem.builder()
+                .product(product)
+                .quantity(quantity)
+                .orderPrice(orderPrice)
+                .build();
+    }
+
     void assignOrder(Order order) {
         this.order = order;
     }
